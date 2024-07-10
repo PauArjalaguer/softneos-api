@@ -31,7 +31,6 @@ class EventController extends Controller
     public function store(SaveEventRequest $request)
     {
         $event = Event::create($request->validated());
-        //return response()->json($expense,Response::HTTP_CREATED);
     }
 
     /**
@@ -40,7 +39,6 @@ class EventController extends Controller
     public function show(Event $event)
     {
         return $event;
-   
     }
 
     /**
@@ -54,11 +52,25 @@ class EventController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(SaveEventRequest $request, Event $event)
+    public  function updateEventInfo(Request $request)
     {
-        $event_id = Event::findOrFail($event);
-        $event_id->update($request->validated());
-       // return response()->json($event_id, Response::HTTP_OK);
+        $validatedData = $request->validate([
+            'event_name' => 'required|string|max:255',
+            'event_image' => 'required|string|max:255',
+            'event_date' => 'required|date',
+            'event_time' => 'required|string',
+            'event_price' => 'required|integer',
+        ]);
+
+        $record = Event::find($request->event_id);
+        if ($record) {
+            $record->update($validatedData);
+            return response()->json(['message' => 'Esdeveniment actualitzat']);
+        } else {
+            Event::insert($validatedData);
+
+            return response()->json(['message' => 'Esdeveniment creat']);
+        }
     }
 
     /**

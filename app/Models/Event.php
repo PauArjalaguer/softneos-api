@@ -13,7 +13,11 @@ class Event extends Model
 
     public static function getEventsNotExpired()
     {
-        $events = Event::whereRaw("CONCAT(event_date, ' ', event_date) > ?", [Carbon::now()->toDateTimeString()])->get();
+        $events = Event::select('events.event_date', 'events.event_time', 'events.id', 'events.event_name','event_image')->whereRaw("CONCAT(event_date, ' ', event_date) > ?", [Carbon::now()->toDateTimeString()])->selectSub(function ($query) {
+            $query->selectRaw('COUNT(*)')
+                ->from('event_seats')
+                ->whereColumn('event_id', 'events.id'); // Referència correcta a la columna 'id' de la taula 'events'
+        }, 'seat_count')->get();
         return $events;
     }
 }

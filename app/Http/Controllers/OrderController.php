@@ -2,11 +2,14 @@
 
 namespace App\Http\Controllers;
 
+
 use App\Models\EventSeat;
 use App\Models\Order;
 use App\Models\OrderTicket;
 use App\Models\Ticket;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Mail;
+use App\Mail\SendMail;
 
 class OrderController extends Controller
 {
@@ -66,10 +69,13 @@ class OrderController extends Controller
         //
     }
 
-    public function createOrder(int $session_id, string $user_email = 'hotmail@hotmail.com', string $user_name = 'Comprador')
+    public function createOrder(Request $request)
     {
-        EventSeat::where('session_id', $session_id)->update(['seatstatus_id' => 5]);
-        $assignedSeats = EventSeat::where('session_id', $session_id)->where('seatstatus_id', 5)->get();
+        $user_email = $request->usermail;
+        $session_id = $request->session_id;
+        $user_name = $request->username;
+
+        $assignedSeats = EventSeat::where('session_id', $session_id)->where('seatstatus_id', 4)->get();
         $seatsArray = $assignedSeats->map(function ($seat) {
             return [
                 'seat_id' => $seat->seat_id,
@@ -77,9 +83,9 @@ class OrderController extends Controller
             ];
         })->toArray();
         Ticket::insert($seatsArray);
-
+        EventSeat::where('session_id', $session_id)->update(['seatstatus_id' => 5]);
         $order = [
-            'mail_send'=>0,
+            'mail_send' => 0,
             'order_userEmail' => $user_email,
             'order_userName' => $user_name,
         ];
@@ -95,6 +101,18 @@ class OrderController extends Controller
             ];
         })->toArray();
         OrderTicket::insert($ticketsArray);
+        $results = $assignedSeats;
 
+        $results = OrderTicket::join('orders', 'orders.id', '=', 'order_tickets.order_id')
+            ->join('tickets', 'tickets.id', '=', 'order_tickets.ticket_id')
+            ->join('seats', 'seats.id', '=', 'tickets.seat_id')
+            ->join('event_seats', 'event_seats.seat_id', '=', 'tickets.seat_id')
+            ->join('events', 'events.id', '=', 'event_seats.event_id')
+            ->select('events.event_name', 'events.event_date', 'events.event_time', 'seats.seat_row', 'seats.seat_col','order_userName','event_price')
+            ->where('session_id', $session_id)
+            ->where('orders.id', $order_id)->get();
+
+        Mail::to($user_email)->send(new SendMail($results));
+       
     }
 }
