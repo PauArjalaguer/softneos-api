@@ -3,15 +3,11 @@
 namespace App\Http\Controllers;
 
 use App\Models\EventSeat;
-use App\Models\Seat;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 
 class EventSeatController extends Controller
-{
-    /**
-     * Display a listing of the resource.
-     */
+{    
     public function index()
     {
         //
@@ -21,46 +17,6 @@ class EventSeatController extends Controller
      * Show the form for creating a new resource.
      */
     public function create()
-    {
-        //
-    }
-
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(Request $request)
-    {
-        //
-    }
-
-    /**
-     * Display the specified resource.
-     */
-    public function show(EventSeat $eventSeat)
-    {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(EventSeat $eventSeat)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, EventSeat $eventSeat)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(EventSeat $eventSeat)
     {
         //
     }
@@ -107,8 +63,8 @@ class EventSeatController extends Controller
 
     public static function updateMultipleSeats(int $event_id, string $typeOfSeat, int $number)
     {
-        $searchSeatsWithStatusInTheEvent = EventSeat::searchSeatsWithStatusInTheEvent($typeOfSeat, $number, $event_id); 
-        $searchSeatsWithCorridorStatusInTheEvent = EventSeat::searchSeatsWithCorridorStatusInTheEvent($typeOfSeat, $number, $event_id);
+        $searchSeatsWithStatusInTheEvent = EventSeat::searchSeatsWithStatusInTheEvent($typeOfSeat, $number, $event_id); //busco seients que tinguin estat pero que no sigui 1 (passadís)
+        $searchSeatsWithCorridorStatusInTheEvent = EventSeat::searchSeatsWithCorridorStatusInTheEvent($typeOfSeat, $number, $event_id);  //busco seients que tinguin estat 1 (passadís)
 
         if ($searchSeatsWithStatusInTheEvent == 0) {
             $seatsInColOrRow = EventSeat::seatsInColOrRow($typeOfSeat, $number, $event_id);

@@ -10,21 +10,27 @@ return new class extends Migration
      * Run the migrations.
      */
     public function up(): void
-    {
-        Schema::create('event_seats', function (Blueprint $table) {
-            $table->id();            
-            $table->timestamp('created_at', 6);
-            $table->timestamp('updated_at', 6);
-            $table->foreignId('seat_id')->constrained()->cascadeOnDelete();
-            $table->foreignId('event_id')->constrained()->cascadeOnDelete();
-          //  $table->unsignedBigInteger('seatstatus_id');
-           $table->foreign('seatstatus_id')->references('id')->on('seatstatus')->onDelete('cascade');
-        });
+    {     
+           
+            Schema::create('event_seats', function (Blueprint $table) {
+                $table->unsignedBigInteger('event_id');
+                $table->unsignedBigInteger('seat_id');
+    
+                $table->primary(['event_id', 'seat_id']);
+    
+               // $table->foreign('event_id')->references('id')->on('events')->onDelete('cascade')->onUpdate('no action');
+                //$table->foreign('seat_id')->references('id')->on('seats')->onDelete('cascade')->onUpdate('no action');
+                $table->foreign('seatstatus_id')
+                ->references('id')->on('seatstatus')
+                ->onUpdate('NO ACTION')
+                ->onDelete('NO ACTION');
+                $table->timestamps();
+            });
+
+          
+
     }
 
-    /**
-     * Reverse the migrations.
-     */
     public function down(): void
     {
         Schema::dropIfExists('event_seats');

@@ -13,11 +13,11 @@ class EventSeat extends Model
     use HasFactory;
 
     public static function clearUnusedSeats()
-    { 
-        $threshold = Carbon::now()->subMinutes(15);        
+    {
+        $threshold = Carbon::now()->subMinutes(15);
         EventSeat::where('seatstatus_id', 4)
             ->where('created_at', '<', $threshold)
-            ->delete(); 
+            ->delete();
     }
     public static function getEventSeatsStatusByEventId(int $event_id, string $session_id)
     {
@@ -27,7 +27,7 @@ class EventSeat extends Model
         })
             ->leftJoin('seatstatus', 'seatstatus.id', '=', 'event_seats.seatstatus_id')
             ->leftJoin('events', 'events.id', '=', 'event_seats.event_id')
-            ->select(DB::raw("$session_id as session_id_from_app"),'seats.*', 'event_seats.id as eventId', 'seatstatus.status_color', 'seatstatus.status_name',  'event_price', 'session_id')
+            ->select(DB::raw("$session_id as session_id_from_app"), 'seats.*',  'seatstatus.status_color', 'seatstatus.status_name',  'event_price', 'session_id')
             ->orderBy('seat_row', 'asc')
             ->orderBy('seat_col', 'asc')
             ->get();
@@ -57,7 +57,6 @@ class EventSeat extends Model
             ->where('event_seats.event_id', $event_id)
             ->where($typeOfSeat, $number)
             ->where('seatstatus_id', '!=', 1)
-            ->select('event_seats.*', 'seats.*', 'seatstatus_id.*')
             ->count();
         return $searchSeatsWithStatusInTheEvent;
     }
@@ -69,7 +68,6 @@ class EventSeat extends Model
             ->where('event_seats.event_id', $event_id)
             ->where($typeOfSeat, $number)
             ->where('seatstatus_id', '=', 1)
-            ->select('event_seats.*', 'seats.*', 'seatstatus_id.*')
             ->count();
         return $searchSeatsWithCorridorStatusInTheEvent;
     }
@@ -92,7 +90,7 @@ class EventSeat extends Model
     public static function getEventSeatSummaryBySession_id(int $event_id, int $session_id, int $role_id)
     {
         return  EventSeat::join('events', 'events.id', 'event_seats.event_id')
-        ->join('seats', 'seats.id', 'event_seats.seat_id')
-        ->where('session_id', $session_id)->get();
+            ->join('seats', 'seats.id', 'event_seats.seat_id')
+            ->where('session_id', $session_id)->get();
     }
 }

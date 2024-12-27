@@ -27,18 +27,3 @@ Route::get('send-email', function () {
 
 });
 Route::post('login', [LoginController::class, 'login']);
-
-//Route::get('EventSeat/updateEventSeatStatus/{event_id}/{seat_id}{uuid}/{status_id}', [EventSeatController::class, 'updateEventSeatStatus']);
-
-
-//Route::apiResource('seats', SeatController::class);
-/* Route::get('events/getEvent/{show_id}/{event_id}', [EventController::class,'getEvent']);
-Route::get('events/getEventsByShow_id/{event_id}', [EventController::class,'getEventsByShow_id']);
-Route::get('seats/updateSeatStatus/{idSeat}/{idEvent}/{uuid}/{value}', [EventSeatController::class, 'updateSeatStatus']);
-Route::get('seats/updateMultipleSeats/{typeofSeat}/{number}/{event_id}', [EventSeatController::class, 'updateMultipleSeats']);
-Route::get('seats/{idEvent}/{uuid}/{is_admin}', [SeatController::class, 'getTheaterMapByEvent']);
-Route::get('order/orderSummary/{session_id}', [EventSeatController::class, 'getOrderSummary']); */
-
-Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
-    return $request->user();
-});
